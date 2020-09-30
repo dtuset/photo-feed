@@ -1,5 +1,4 @@
 import axios from 'axios';
-// import { cacheAdapterEnhancer } from 'axios-extensions';
 import appConfig from '../../appConfig';
 
 axios.defaults.baseURL = 'http://interview.agileengine.com';
@@ -8,9 +7,6 @@ axios.defaults.timeout = 5000; // 5 secs
 axios.interceptors.request.use(
   (config) => {
     const newConf = config;
-    // if (typeof window === 'undefined') {
-    //   return newConf;
-    // }
     const token = window.localStorage.getItem('token');
     if (token) {
       newConf.headers.Authorization = `Bearer ${token}`;
@@ -18,8 +14,7 @@ axios.interceptors.request.use(
     return newConf;
   },
   (error) => {
-    // eslint-disable-next-line
-    console.log(error);
+    Promise.reject(error);
   },
 );
 
@@ -53,11 +48,7 @@ axios.interceptors.response.use(
     if (error.response.status === 401) {
       return appService.getToken()
         .then((data) => {
-          // const token = window.localStorage.getItem('token');
           if (data.auth) {
-            // originalRequest.headers.Authorization = `Bearer ${data.token}`;
-            // window.localStorage.setItem('token', data.token);
-            // New request with new token
             const { config } = error;
             config.headers.Authorization = `Bearer ${data.token}`;
 
@@ -74,35 +65,6 @@ axios.interceptors.response.use(
     }
     return Promise.reject(error.response);
   },
-  //   if (response.status === 200 || response.status === 201) {
-  //     return Promise.resolve(response);
-  //   }
-  //   return Promise.reject(response);
-  // },
-  // (error) => {
-  //   if (error.response.status) {
-  //     switch (error.response.status) {
-  //       case 400:
-  //         // do something
-  //         break;
-  //       case 401:
-  //         this.getToken();
-  //         break;
-  //       case 403:
-  //         // do sthg
-  //         break;
-  //       case 404:
-  //         // eslint-disable-next-line
-  //         alert('page not exist');
-  //         break;
-  //       case 502:
-  //         // do sthg
-  //         break;
-  //       default:
-  //         break;
-  //     }
-  //   }
-  //   return Promise.reject(error.response);
 );
 
 export default appService;

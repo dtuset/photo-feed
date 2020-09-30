@@ -1,3 +1,3 @@
 export default {
-  clientKey: { apiKey: process.env.VUE_APP_API_CLIENT_KEY },
+  clientKey: { apiKey: '23567b218376f79d9415' },
 };
