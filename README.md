@@ -4,7 +4,12 @@ Image Gallery
 ```
 npm install
 ```
-
+### Go to **./photo-feed/appConfig.js** and replace **XXXXX** with an Api Key
+```
+export default {
+  clientKey: { apiKey: 'XXXXX' },
+};
+```
 ### Compiles and hot-reloads for development
 ```
 npm run serve
