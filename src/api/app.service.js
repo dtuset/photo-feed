@@ -18,35 +18,23 @@ axios.interceptors.request.use(
   },
 );
 
-const appService = {
-  get(url) {
-    return new Promise((resolve, reject) => {
-      axios.get(url)
-        .then((response) => {
-          resolve(response.data);
-        }).catch((error) => {
-          reject(error);
-        });
-    });
-  },
-  getToken() {
-    return new Promise((resolve, reject) => {
-      axios.post('/auth', appConfig.clientKey)
-        .then((response) => {
-          window.localStorage.setItem('token', response.data.token);
-          resolve(response.data);
-        }).catch((error) => {
-          reject(error);
-        });
-    });
-  },
-};
+function getToken() {
+  return new Promise((resolve, reject) => {
+    axios.post('/auth', appConfig.clientKey)
+      .then((response) => {
+        window.localStorage.setItem('token', response.data.token);
+        resolve(response.data);
+      }).catch((error) => {
+        reject(error);
+      });
+  });
+}
 
 axios.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response.status === 401) {
-      return appService.getToken()
+      return getToken()
         .then((data) => {
           if (data.auth) {
             const { config } = error;
@@ -66,5 +54,18 @@ axios.interceptors.response.use(
     return Promise.reject(error.response);
   },
 );
+
+const appService = {
+  get(url) {
+    return new Promise((resolve, reject) => {
+      axios.get(url)
+        .then((response) => {
+          resolve(response.data);
+        }).catch((error) => {
+          reject(error);
+        });
+    });
+  },
+};
 
 export default appService;

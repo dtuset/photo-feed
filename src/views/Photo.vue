@@ -5,14 +5,15 @@
       <v-card color="black" >
         <v-row no-gutters class="d-flex flex-row header">
             <div class="flex-col header-text overcolor">
-              <div><b>Author: </b>{{ modalData.author }}</div>
-              <div><b>Camera Model: </b>{{ modalData.camera }}</div>
+              <div class="headText ht">
+                <div><b>Author: </b>{{ modalData.author }}</div>
+                <div><b>Camera Model: </b>{{ modalData.camera }}</div>
+              </div>
               <div>
                 <v-chip
-                  class="ma-2"
                   color="pink"
-                  label
-                  text-color="white"
+                  outlined
+                  pill
                 >
                   <v-icon left>
                     mdi-label
@@ -20,7 +21,9 @@
                   {{ modalData.tags }}
                 </v-chip>
               </div>
-              <!-- <div><b>Hashtags: </b>{{ modalData.tags }}</div> -->
+            </div>
+            <div class="overcolor">
+
             </div>
             <div cols="1" justify="end" class="overcolor">
               <v-btn class="close" icon dark @click="close">
@@ -158,7 +161,7 @@ export default {
 };
 </script>
 
-<style lang="css">
+<style scoped>
   .header {
     position:fixed;
     z-index:900;
@@ -187,6 +190,9 @@ export default {
   .arrows {
     padding: 5%;
     background: transparent;
+  }
+  .ht {
+    padding-left: 2%;;
   }
   @media only screen and (max-width: 750px) {
     .header {
