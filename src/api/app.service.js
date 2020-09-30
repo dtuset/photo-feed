@@ -32,26 +32,28 @@ function getToken() {
 
 axios.interceptors.response.use(
   (response) => response,
-  async (error) => {
+  async (error) => { // eslint-disable-next-line
     if (error.response.status === 401) {
-      return getToken()
-        .then((data) => {
-          if (data.auth) {
-            const { config } = error;
-            config.headers.Authorization = `Bearer ${data.token}`;
-
-            return new Promise((resolve) => {
-              axios.request(config).then((response) => {
-                resolve(response);
-              });
-            });
-          }
-          // eslint-disable-next-line
-          return data;
-        })// eslint-disable-next-line
-        .catch((error) => console.log(error));
+      if (error.config.url === '/auth') {
+        return Promise.reject(error);
+      }
+      // eslint-disable-next-line
+      if (!error.config._retry) {
+        // eslint-disable-next-line
+        error.config._retry = true;
+        return getToken()
+          .then((data) => {
+            if (data.auth) {
+              const { config } = error;
+              config.headers.Authorization = `Bearer ${data.token}`;
+              return axios.request(config);
+            }
+            return '';
+          });
+      }
+      return Promise.reject(error);
     }
-    return Promise.reject(error.response);
+    return Promise.reject(error);
   },
 );
 

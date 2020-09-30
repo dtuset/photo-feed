@@ -42,7 +42,8 @@
               </v-col>
             </v-row>
           </v-container>
-          <Photo :pageImages=pageImages
+          <Photo
+          :pageImages=pageImages
           :modalDataArray=modalDataArray
           :dialog=dialog
           :modalData=modalData
@@ -54,11 +55,15 @@
         </v-card>
       </v-col>
     </v-row>
+    <Errors :onErrors=onErrors />
+    <Loading :loading=loading />
   </v-container>
 </template>
 
 <script>
 import Photo from '@/views/Photo.vue';
+import Errors from '@/components/Errors.vue';
+import Loading from '@/components/Loading.vue';
 import appService from '@/api/app.service';
 import { debounce } from 'lodash';
 
@@ -76,6 +81,7 @@ export default {
       loading: false,
       id: '',
       index: 0,
+      onErrors: false,
     };
   },
   methods: {
@@ -124,15 +130,12 @@ export default {
         .then((data) => {
           this.modalData = data;
           this.fillsModalDataArray(index);
+          this.loading = false;
           this.dialog = true;
         })
         .catch(() => {
-          this.loading = false;
+          this.onErrors = true;
         });
-      this.loading = false;
-    },
-    renderImages(page) {
-      this.getPageData(page);
     },
     getPageData(page) {
       this.loading = true;
@@ -143,11 +146,12 @@ export default {
           this.hasMore = data.hasMore;
           this.page = data.page;
           this.pageCount = data.pageCount;
+          this.loading = false;
         })
         .catch(() => {
+          this.onErrors = true;
           this.loading = false;
         });
-      this.loading = false;
     },
     newPageReset() {
       this.pageImages = [];
@@ -162,9 +166,9 @@ export default {
   },
   watch: {
     // eslint-disable-next-line
-    page: debounce(function (n) {
+    page: debounce(function (page) {
       this.newPageReset();
-      this.renderImages(n);
+      this.getPageData(page);
     }, 500),
   },
   created() {
@@ -172,6 +176,8 @@ export default {
   },
   components: {
     Photo,
+    Errors,
+    Loading,
   },
 };
 </script>
